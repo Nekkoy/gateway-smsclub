@@ -63,6 +63,7 @@ class SendMessageService extends AbstractSendMessageService
      */
     protected function response()
     {
+        // {"success_request":{"add_info":{"380XXXXXXXX":"Некорректный номер получателя"}}}
         $response = json_decode($this->response, true);
         if( isset($response["success_request"]["info"]) ) {
             $this->response_code = 0;
@@ -70,6 +71,9 @@ class SendMessageService extends AbstractSendMessageService
         } elseif( isset($response["name"], $response["message"]) ) {
             $this->response_code = -1;
             $this->response_message = "[{$response["name"]}] {$response["message"]}";
+        } elseif( isset($response["success_request"]["add_info"]) ) {
+            $this->response_code = -1;
+            $this->response_message = json_encode($response["success_request"]["add_info"], JSON_UNESCAPED_UNICODE);
         }
     }
 }
